@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cy.yan.dao.YLogsDao">
+
+    <resultMap type="com.cy.yan.entity.YLogs" id="YLogsMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="username" column="username" jdbcType="VARCHAR"/>
+        <result property="operation" column="operation" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="YLogsMap">
+        select id,
+               username,
+               operation,
+               createdTime
+        from management.y_logs
+        where id = #{id}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="YLogsMap">
+        select id,
+               username,
+               operation,
+               createdTime
+        from management.y_logs limit #{offset}, #{limit}
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="queryAll" resultMap="YLogsMap">
+        select
+        id, username, operation, createdTime
+        from management.y_logs
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="username != null and username != ''">
+                and username = #{username}
+            </if>
+            <if test="operation != null and operation != ''">
+                and operation = #{operation}
+            </if>
+            <if test="createdtime != null">
+                and createdTime = #{createdtime}
+            </if>
+        </where>
+    </select>
+    <sql id="queryWhereId">
+        from y_logs
+        <where>
+            <if test="username!=null and username!=''">
+                username like concat("%",#{username},"%")
+            </if>
+        </where>
+    </sql>
+    <select id="getRowCount" resultType="java.lang.Integer">
+        select count(*)
+        <include refid="queryWhereId"/>
+    </select>
+    <select id="findPageObjects" resultType="com.cy.yan.entity.YLogs">
+        select *
+        <include refid="queryWhereId"/>
+        order by createdTime desc
+        limit #{startIndex},#{pageSize}
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into management.y_logs(username, operation, createdTime)
+        values (#{username}, #{operation}, #{createdtime})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into management.y_logs(username, operation, createdTime)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.username}, #{entity.operation}, #{entity.createdtime})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into management.y_logs(username, operation, createdTime)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.username}, #{entity.operation}, #{entity.createdtime})
+        </foreach>
+        on duplicate key update
+        username = values(username) , operation = values(operation) , createdTime = values(createdTime)
+    </insert>
+    <insert id="insertObject">
+        insert into y_logs
+            (username,operation,method,params,time,createdTime)
+        values
+        (#{username},#{operation},#{method},#{params},#{time},#{createdTime})
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update management.y_logs
+        <set>
+            <if test="username != null and username != ''">
+                username = #{username},
+            </if>
+            <if test="operation != null and operation != ''">
+                operation = #{operation},
+            </if>
+            <if test="createdtime != null">
+                createdTime = #{createdtime},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete
+        from management.y_logs
+        where id = #{id}
+    </delete>
+    <delete id="deleteObjects">
+        delete from y_logs
+        where id in <!-- (1,2,3,4,5) -->
+        <foreach collection="ids"
+                 open="("
+                 close=")"
+                 separator=","
+                 item="id">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>
+

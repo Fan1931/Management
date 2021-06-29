@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cy.yan.dao.YUserDao">
+
+    <resultMap type="com.cy.yan.vo.YUserDept"
+               id="yUserDept">
+        <!-- 关联映射  many2one,one2one -->
+        <association property="yDept"
+                     column="deptId"
+                     select="com.cy.yan.dao.YDeptsDao.queryById">
+        </association>
+    </resultMap>
+
+    <insert id="insertObject"
+            parameterType="com.cy.yan.entity.YUser"
+            useGeneratedKeys="true"
+            keyProperty="id">
+        insert into y_user
+        (username,password,deptId,mobile,salt,valid,
+         createdTime,modifiedTime,modifiedUser)
+        values
+        (#{username},#{password},#{deptId},#{mobile},#{salt},#{valid},
+         now(),now(),#{modifiedUser})
+    </insert>
+
+    <select id="getRowCount" resultType="int">
+        select count(*)
+        <include refid="queryWhereId"/>
+    </select>
+
+    <select id="findPageObjects"
+            resultMap="yUserDept">
+        select *
+        <include refid="queryWhereId"/>
+        order by createdTime desc
+        limit #{startIndex},#{pageSize}
+    </select>
+
+    <select id="findUserByUserName" resultType="com.cy.yan.entity.YUser">
+        select *
+        from y_user
+        where username = #{username}
+    </select>
+
+    <select id="findObjectById" resultMap="yUserDept">
+        select id, username, mobile, deptId
+        from y_user
+        where id = #{id}
+    </select>
+    <select id="queryUserById" resultType="com.cy.yan.entity.YUser">
+        select *
+        from y_user where userId = #{id};
+    </select>
+    <select id="findByUsername" resultType="com.cy.yan.entity.YUser">
+        select * from y_user where username=#{username}
+    </select>
+
+    <sql id="queryWhereId">
+        from y_user
+        <where>
+            <if test="username!=null and username!=''">
+                username like concat("%",#{username},"%")
+            </if>
+        </where>
+    </sql>
+
+    <update id="validById">
+        update y_user
+        set valid=#{valid},
+            modifiedUser=#{modifiedUser},
+            modifiedTime=now()
+        where id = #{id}
+    </update>
+    <update id="updateObject">
+        update y_user
+        set username=#{username},
+            mobile=#{mobile},
+            deptId=#{deptId},
+            modifiedUser=#{modifiedUser},
+            modifiedTime=now()
+        where id=#{id}
+    </update>
+
+    <update id="updatePassword">
+        update y_user
+        set password=#{password},
+            salt=#{salt},
+            modifiedTime=now()
+        where id=#{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete
+        from management.y_user
+        where id = #{id}
+    </delete>
+
+</mapper>
+

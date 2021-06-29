@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cy.yan.dao.YRolesDao">
+
+    <resultMap type="com.cy.yan.entity.YRoles" id="YRolesMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="name" column="name" jdbcType="VARCHAR"/>
+        <result property="modifiedUser" column="modifiedUser" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="YRolesMap">
+        select id,
+               name,
+               createdTime,
+               modifiedTime,
+               modifiedUser
+        from management.y_roles
+        where id = #{id}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="YRolesMap">
+        select id,
+               name,
+               createdTime,
+               modifiedTime,
+               modifiedUser
+        from management.y_roles limit #{offset}, #{limit}
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="queryAll" resultMap="YRolesMap">
+        select
+        id, name, createdTime, modifiedTime, modifiedUser
+        from management.y_roles
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="name != null and name != ''">
+                and name = #{name}
+            </if>
+            <if test="createdtime != null">
+                and createdTime = #{createdtime}
+            </if>
+            <if test="modifiedtime != null">
+                and modifiedTime = #{modifiedtime}
+            </if>
+            <if test="modifieduser != null and modifieduser != ''">
+                and modifiedUser = #{modifieduser}
+            </if>
+        </where>
+    </select>
+    <select id="getRowCount" resultType="java.lang.Integer">
+        select count(*)
+        <include refid="queryWhereId"/>
+    </select>
+    <select id="findPageObjects" resultType="com.cy.yan.entity.YRoles">
+        select *
+        <include refid="queryWhereId"/>
+        order by createdTime desc
+        limit #{startIndex},#{pageSize}
+    </select>
+    <select id="findObjectById" resultType="com.cy.yan.vo.YRoleMenus">
+        select id,name
+        from y_roles
+        where id=#{id}
+    </select>
+    <select id="findObjects" resultType="com.cy.common.vo.CheckBox">
+        select id,name
+        from y_roles
+    </select>
+    <sql id="queryWhereId">
+        from y_roles
+        <where>
+            <if test="name!=null and name!=''">
+                name like concat("%",#{name},"%")
+            </if>
+        </where>
+    </sql>
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into management.y_roles(name, createdTime, modifiedTime, modifiedUser)
+        values (#{name}, #{createdtime}, #{modifiedtime}, #{modifieduser})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into management.y_roles(name, createdTime, modifiedTime, modifiedUser)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.name}, #{entity.createdtime}, #{entity.modifiedtime}, #{entity.modifieduser})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into management.y_roles(name, createdTime, modifiedTime, modifiedUser)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.name}, #{entity.createdtime}, #{entity.modifiedtime}, #{entity.modifieduser})
+        </foreach>
+        on duplicate key update
+        name = values(name) , createdTime = values(createdTime) , modifiedTime = values(modifiedTime) , modifiedUser =
+        values(modifiedUser)
+    </insert>
+    <insert id="insertObject"
+            useGeneratedKeys="true"
+            keyProperty="id">
+        insert into y_roles
+        (id,name,note,createdTime,modifiedTime,
+         createdUser,modifiedUser)
+        values
+        (null,#{name},#{note},now(),now(),
+         #{createdUser},#{modifiedUser})
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update management.y_roles
+        <set>
+            <if test="name != null and name != ''">
+                name = #{name},
+            </if>
+            <if test="createdtime != null">
+                createdTime = #{createdtime},
+            </if>
+            <if test="modifiedtime != null">
+                modifiedTime = #{modifiedtime},
+            </if>
+            <if test="modifieduser != null and modifieduser != ''">
+                modifiedUser = #{modifieduser},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+    <update id="updateObject">
+        update y_roles
+        <set>
+            <if test="name!=null and name!=''">
+                name=#{name},
+            </if>
+            <if test="note!=null and note!=''">
+                note=#{note},
+            </if>
+            <if test="modifiedUser!=null and modifiedUser!=''">
+                modifiedUser=#{modifiedUser},
+            </if>
+            modifiedTime=now()
+        </set>
+        where id=#{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete
+        from management.y_roles
+        where id = #{id}
+    </delete>
+
+</mapper>
+

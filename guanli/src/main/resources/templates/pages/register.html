@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>注册页面</title>
+    <style>
+        body {
+            background: url("./img/register_bg.png");
+        }
+
+        .rg_layout {
+            width: 900px;
+            height: 500px;
+            border: 8px solid #EEEEEE;
+            background-color: white;
+            margin: auto;
+        }
+
+        .rg_left {
+            float: left;
+            margin: 15px;
+        }
+
+        .rg_center {
+            float: left;
+        }
+
+        .rg_right {
+            float: right;
+            margin: 15px;
+        }
+
+        .rg_left > p:first-child {
+            color: #FFD026;
+            font-size: 20px;
+        }
+
+        .rg_left > p:last-child {
+            color: #A6A6A6;
+            font-size: 20px;
+        }
+
+        .rg_right > p:first-child {
+            font-size: 15px;
+
+        }
+
+        .rg_right p a {
+            color: pink;
+        }
+
+        .td_left {
+            width: 100px;
+            height: 45px;
+            text-align: right;
+        }
+
+        .td_right {
+            padding-left: 50px;
+        }
+
+        #username, #password, #dept, #tel, #checkcode {
+            width: 251px;
+            height: 32px;
+            border: 1px solid #A6A6A6;
+            border-radius: 5px;
+            padding-left: 10px;
+        }
+
+        #checkcode {
+            width: 110px;
+        }
+
+        #img_check {
+            height: 32px;
+            vertical-align: middle;
+        }
+
+        #btn_sub {
+            width: 150px;
+            height: 40px;
+            background-color: #FFD026;
+            border: 1px solid #FFD026;
+        }
+
+        .error {
+            color: red;
+        }
+
+        #td_sub {
+            padding-left: 150px;
+        }
+    </style>
+    <script>
+        window.onload = function () {
+            document.getElementById("form").onsubmit = function () {
+                return checkUsername() && checkPassword() && checkDept();
+            };
+            document.getElementById("username").onblur = checkUsername;
+            document.getElementById("password").onblur = checkPassword;
+            document.getElementById("dept").onblur = checkDept;
+        };
+
+        function checkUsername() {
+            var username = document.getElementById("username").value;
+            var reg_username = /^[\u4e00-\u9fa5a-zA-Z0-9]{2,10}$/;
+            var flag = reg_username.test(username);
+            var s_username = document.getElementById("s_username");
+            if (flag) {
+                NameIsOK();
+                s_username.innerHTML = "用户名格式正确";
+            } else {
+                s_username.innerHTML = "用户名格式错误，最少两位";
+                return false;
+            }
+            return flag;
+        }
+
+        function checkDept() {
+            var dept = document.getElementById("dept").value;
+            var reg_dept = /^[0-9]$/;
+            var flag = reg_dept.test(dept);
+            var s_dept = document.getElementById("s_dept");
+            if (flag) {
+                s_dept.innerHTML = "班级代码正确";
+            } else {
+                s_dept.innerHTML = "班级代码错误";
+                alert("请输入正确班级代码，例如：1")
+            }
+            return flag;
+        }
+
+        function checkPassword() {
+            var password = document.getElementById("password").value;
+            var reg_password = /^\w{6,12}$/;
+            var flag = reg_password.test(password);
+            var s_password = document.getElementById("s_password");
+            if (flag) {
+                s_password.innerHTML = "密码格式正确";
+            } else {
+                s_password.innerHTML = "密码格式有误，最少六位密码";
+                return false;
+            }
+            return flag;
+        }
+
+    </script>
+</head>
+<body>
+
+<div class="rg_layout">
+
+    <div class="rg_left">
+        <p>新用户注册</p>
+        <p>USER REGISTER</p>
+    </div>
+
+    <div class="rg_center">
+        <div class="rg_form">
+            <form id="form" method="post">
+                <table>
+                    <tr>
+                        <td class="td_left"><label for="username">用户名</label></td>
+                        <td class="td_right">
+                            <input type="text" name="username" id="username" placeholder="请输入用户名">
+                            <span id="s_username" class="error"></span>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td class="td_left"><label for="password">密码</label></td>
+                        <td class="td_right">
+                            <input type="password" name="password" id="password" placeholder="请输入位密码">
+                            <span id="s_password" class="error"></span>
+                        </td>
+                    </tr>
+
+
+                    <tr>
+                        <td class="td_left"><label for="dept">班级代码</label></td>
+                        <td class="td_right">
+                            <input type="text" name="dept" id="dept" placeholder="请输入班级">
+                            <span id="s_dept" class="error"></span>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td class="td_left"><label for="tel">手机号</label></td>
+                        <td class="td_right"><input type="text" name="tel" id="tel" placeholder="请输入手机号"></td>
+                    </tr>
+
+                    <tr>
+                        <td class="td_left"><label>角色</label></td>
+                        <td class="td_right" id="rolesId">
+                            <input type="radio" name="roleId" value="1" > 管理员
+                            <input type="radio" name="roleId" value="11" checked> 学生
+                        </td>
+                    </tr>
+
+                    <!--          <tr>-->
+                    <!--            <td class="td_left"><label for="checkcode" >验证码</label></td>-->
+                    <!--            <td class="td_right"><input type="text" name="checkcode" id="checkcode" placeholder="请输入验证码">-->
+                    <!--              <img id="img_check" src="img/verify_code.jpg">-->
+                    <!--            </td>-->
+                    <!--          </tr>-->
+
+                    <tr>
+                        <td colspan="2" id="td_sub" class="btn"><input type="button" id="btn_sub" value="注册" class="zc"></td>
+                    </tr>
+                </table>
+
+            </form>
+        </div>
+    </div>
+
+    <div class="rg_right">
+        <p>已有账号?<a href="/doLoginUI">立即登录</a></p>
+    </div>
+
+</div>
+<script src="bower_components/jquery/dist/jquery.min.js"></script>
+<!-- Bootstrap 3.3.7 -->
+<script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+<!-- iCheck -->
+<script src="plugins/iCheck/icheck.min.js"></script>
+<script type="text/javascript">
+    $(function () {
+        $(".zc").click(doSaveOrUpdate);
+    });
+
+    function doSaveOrUpdate(){
+        //1.获取表单数据
+        var params=doGetEditFormData();
+        //2.发起异步请求
+        var url="yUser/doRegister";
+        $.post(url,params,function(result){
+            if(result.state==1){
+                alert(result.message);
+                location.replace("doLoginUI");
+            }else{
+                alert(result.message);
+            }
+        })
+    }
+
+    function doGetEditFormData(){
+        //获取用户输入的数据
+        var params={
+            username:$("#username").val(),
+            password:$("#password").val(),
+            mobile:$("#tel").val(),
+            deptId: $("#dept").val()
+        }
+        //获取选择的角色
+        var roleIds=new Array();
+        $("#rolesId input[name='roleId']")
+            .each(function(){
+                if($(this).prop("checked")){
+                    roleIds.push($(this).val());
+                }
+            });
+        params.roleIds=roleIds.toString();
+        return params;
+    }
+
+    function NameIsOK(){
+        var params={
+            username:$("#username").val()
+        }
+        var url = "yUser/doNameOK";
+        $.post(url, params, function (result) {
+            if (result.state == 1) {
+                alert(result.message);
+            } else {
+                alert(result.message);
+            }
+        });
+    }
+</script>
+</body>
+</html>

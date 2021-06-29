@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cy.yan.dao.YDeptsDao">
+
+    <resultMap type="com.cy.yan.entity.YDepts" id="YDeptsMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="name" column="name" jdbcType="VARCHAR"/>
+        <result property="createdtime" column="createdTime" jdbcType="TIMESTAMP"/>
+        <result property="modifiedtime" column="modifiedTime" jdbcType="TIMESTAMP"/>
+        <result property="createduser" column="createdUser" jdbcType="VARCHAR"/>
+        <result property="modifieduser" column="modifiedUser" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="YDeptsMap">
+        select id,
+               name,
+               createdTime,
+               modifiedTime,
+               createdUser,
+               modifiedUser
+        from management.y_depts
+        where id = #{id}
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="queryAll" resultMap="YDeptsMap">
+        select
+        id, name, createdTime, modifiedTime, createdUser, modifiedUser
+        from management.y_depts
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="name != null and name != ''">
+                and name = #{name}
+            </if>
+            <if test="createdtime != null">
+                and createdTime = #{createdtime}
+            </if>
+            <if test="modifiedtime != null">
+                and modifiedTime = #{modifiedtime}
+            </if>
+            <if test="createduser != null and createduser != ''">
+                and createdUser = #{createduser}
+            </if>
+            <if test="modifieduser != null and modifieduser != ''">
+                and modifiedUser = #{modifieduser}
+            </if>
+        </where>
+    </select>
+
+    <select id="findObjects" resultType="java.util.Map">
+        select * from y_depts
+    </select>
+    <select id="findZTreeNodes" resultType="com.cy.common.vo.Node">
+        select id,name
+        from y_depts
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into management.y_depts(name, createdTime, modifiedTime, createdUser, modifiedUser)
+        values (#{name}, #{createdtime}, #{modifiedtime}, #{createduser}, #{modifieduser})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into management.y_depts(name, createdTime, modifiedTime, createdUser, modifiedUser)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.name}, #{entity.createdtime}, #{entity.modifiedtime}, #{entity.createduser},
+            #{entity.modifieduser})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into management.y_depts(name, createdTime, modifiedTime, createdUser, modifiedUser)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.name}, #{entity.createdtime}, #{entity.modifiedtime}, #{entity.createduser},
+            #{entity.modifieduser})
+        </foreach>
+        on duplicate key update
+        name = values(name) , createdTime = values(createdTime) , modifiedTime = values(modifiedTime) , createdUser =
+        values(createdUser) , modifiedUser = values(modifiedUser)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update management.y_depts
+        <set>
+            <if test="name != null and name != ''">
+                name = #{name},
+            </if>
+            <if test="createdtime != null">
+                createdTime = #{createdtime},
+            </if>
+            <if test="modifiedtime != null">
+                modifiedTime = #{modifiedtime},
+            </if>
+            <if test="createduser != null and createduser != ''">
+                createdUser = #{createduser},
+            </if>
+            <if test="modifieduser != null and modifieduser != ''">
+                modifiedUser = #{modifieduser},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete
+        from management.y_depts
+        where id = #{id}
+    </delete>
+
+</mapper>
+
